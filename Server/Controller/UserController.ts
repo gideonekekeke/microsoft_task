@@ -23,10 +23,19 @@ const GetSingleUser = async (
 			{
 				path: "myDay",
 				options: {
-					createdAt: -1,
+					sort: {
+						createdAt: -1,
+					},
 				},
 			},
-			{ path: "task" },
+			{
+				path: "task",
+				options: {
+					sort: {
+						createdAt: -1,
+					},
+				},
+			},
 		]);
 
 		return res.status(200).json({

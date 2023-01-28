@@ -6,12 +6,15 @@ import { GlobalContext } from "../Global/Global";
 import { BiCalendar } from "react-icons/bi";
 import { AiOutlineStar } from "react-icons/ai";
 import axios from "axios";
+import Calendar from "react-calendar";
+import moment from "moment";
+import "react-calendar/dist/Calendar.css";
 
 type TaskData = {
 	_id: string;
 	status: boolean;
 	remainder: string;
-	data: string;
+	date: string;
 	title: string;
 	note: string;
 };
@@ -29,11 +32,23 @@ const MyDay = () => {
 
 	const [title, setTitle] = useState("");
 	const [userData, setUserData] = useState({} as User);
+	const [caledar, setCaledar] = useState(new Date());
+	// const [readID, setReadID] = useState("");
 
+	// console.log(readID);
+
+	// console.log(caledar.toLocaleDateString());
+	// to show the calendar
+	const [show, setShow] = useState(false);
+
+	const toggleCalendar = () => {
+		setShow(!show);
+	};
 	const createMyDay = async () => {
 		await axios
 			.post(`http://localhost:5000/api/task/createTask/${currentUser?._id}`, {
 				title,
+				date: caledar.toDateString(),
 			})
 			.then((res) => {
 				console.log(res);
@@ -46,6 +61,25 @@ const MyDay = () => {
 			.then((res) => {
 				console.log(res);
 				setUserData(res.data.data);
+			});
+	};
+
+	const updatingStatus = async (id: string) => {
+		await axios
+			.patch(
+				`http://localhost:5000/api/task/completeTask/${currentUser?._id}/${id}`,
+			)
+			.then(() => {
+				window.location.reload();
+			});
+	};
+	const updatingStatusFalse = async (id: string) => {
+		await axios
+			.patch(
+				`http://localhost:5000/api/task/uncompleteTask/${currentUser?._id}/${id}`,
+			)
+			.then(() => {
+				window.location.reload();
 			});
 	};
 
@@ -80,7 +114,7 @@ const MyDay = () => {
 						/>
 					</InputHold>
 					<Down wd={showDetail ? "67%" : "90%"}>
-						<First>
+						<First onClick={toggleCalendar}>
 							<BiCalendar />
 						</First>
 						{title !== "" ? (
@@ -90,18 +124,44 @@ const MyDay = () => {
 								Add
 							</Button>
 						)}
+
+						{show ? (
+							<DatePicker>
+								<Calendar value={caledar} onChange={setCaledar} />
+							</DatePicker>
+						) : null}
 					</Down>
 					<br />
 					{userData?.myDay?.map((props) => (
-						<InputHold2 key={props._id} wd={showDetail ? "67%" : "90%"}>
+						<InputHold2
+							bc={props.status ? "#e3f7fe" : "white"}
+							key={props._id}
+							wd={showDetail ? "67%" : "90%"}>
 							<Hol>
-								<Input2 type='radio' />
+								<Input2
+									checked={props.status}
+									onClick={() => {
+										if (props.status) {
+											updatingStatusFalse(props._id);
+										} else {
+											updatingStatus(props._id);
+										}
+									}}
+									type='radio'
+								/>
 								<TitleHold
 									onClick={() => {
 										toggleShow();
+										// setReadID(props._id);
 									}}>
-									<Title>{props.title}</Title>
-									<Sub>sub</Sub>
+									<Title td={props.status ? "line-through " : ""}>
+										{props.title}
+									</Title>
+									<Sub>
+										<BiCalendar style={{ marginRight: "10px" }} />
+										{/* {props.date} */}
+										Due {props?.date}
+									</Sub>
 								</TitleHold>
 							</Hol>
 							<span>
@@ -117,6 +177,13 @@ const MyDay = () => {
 
 export default MyDay;
 
+const DatePicker = styled.div`
+	position: absolute;
+	max-width: 250px;
+	height: 70px;
+	top: 40px;
+`;
+
 const TitleHold = styled.div`
 	font-size: 12px;
 	margin-left: 10px;
@@ -125,13 +192,17 @@ const TitleHold = styled.div`
 const Sub = styled.div`
 	font-size: 10px;
 `;
-const Title = styled.div``;
+const Title = styled.div<{ td: string }>`
+	font-weight: 500;
+	text-decoration: ${(props) => props.td};
+`;
 const Hol = styled.div`
 	display: flex;
 	align-items: center;
 `;
 const First = styled.div`
 	margin-left: 10px;
+	cursor: pointer;
 `;
 const Button = styled.button`
 	margin-right: 10px;
@@ -151,11 +222,12 @@ const Down = styled.div<{ wd: string }>`
 	justify-content: space-between;
 	box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
 	border-radius: 0px 0px 5px 5px;
+	position: relative;
 `;
 
-const InputHold2 = styled.div<{ wd: string }>`
+const InputHold2 = styled.div<{ wd: string; bc: string }>`
 	width: ${(props) => props.wd};
-	background-color: white;
+	background-color: ${(props) => props.bc};
 	height: 40px;
 	display: flex;
 	align-items: center;

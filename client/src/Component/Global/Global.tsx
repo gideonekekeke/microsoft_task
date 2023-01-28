@@ -14,6 +14,7 @@ interface ContextData {
 
 export const GlobalContext = createContext<ContextData>({
 	showDetail: false,
+
 	toggleShow: () => {},
 	currentUser: {
 		name: "",
@@ -28,6 +29,7 @@ export const MainContext: React.FC<React.PropsWithChildren> = ({
 }) => {
 	const [showDetail, setShowDetail] = useState(false);
 	const [currentUser, setCurrentUser] = useState<User>({} as User);
+
 	const toggleShow = () => {
 		setShowDetail(!showDetail);
 	};

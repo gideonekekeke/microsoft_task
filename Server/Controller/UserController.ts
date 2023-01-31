@@ -36,6 +36,14 @@ const GetSingleUser = async (
 					},
 				},
 			},
+			{
+				path: "assigned",
+				options: {
+					sort: {
+						createdAt: -1,
+					},
+				},
+			},
 		]);
 
 		return res.status(200).json({

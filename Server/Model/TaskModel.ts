@@ -20,6 +20,12 @@ const TaskSchema = new mongoose.Schema(
 		status: {
 			type: Boolean,
 		},
+		sender: {
+			type: String,
+		},
+		reciever: {
+			type: String,
+		},
 
 		// day: {
 		// 	type: mongoose.Schema.Types.ObjectId,

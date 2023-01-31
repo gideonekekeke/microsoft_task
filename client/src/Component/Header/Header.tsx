@@ -129,4 +129,6 @@ const Head = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	position: fixed;
+	z-index: 10;
 `;

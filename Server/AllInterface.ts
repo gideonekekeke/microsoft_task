@@ -13,4 +13,6 @@ export interface taskData2 {
 	remainder?: string;
 	note?: string;
 	status: boolean;
+	sender: string;
+	reciever: string;
 }

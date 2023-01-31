@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import styled from "styled-components";
 import { MdOutlineWbSunny } from "react-icons/md";
 import DetailsComp from "../DetailsComp/DetailsComp";
@@ -9,6 +9,7 @@ import axios from "axios";
 import Calendar from "react-calendar";
 import moment from "moment";
 import "react-calendar/dist/Calendar.css";
+import playAud from "../Audio/aud.wav";
 
 type TaskData = {
 	_id: string;
@@ -17,6 +18,7 @@ type TaskData = {
 	date: string;
 	title: string;
 	note: string;
+	reciever: string;
 };
 
 interface User {
@@ -28,17 +30,17 @@ interface User {
 }
 
 const MyDay = () => {
-	const { toggleShow, showDetail, currentUser } = useContext(GlobalContext);
+	const { toggleShow, showDetail, currentUser, readID, setReadID } =
+		useContext(GlobalContext);
+
+	console.log("this is readID", readID);
+	const audRef = useRef(null as any);
+
+	console.log(audRef);
 
 	const [title, setTitle] = useState("");
 	const [userData, setUserData] = useState({} as User);
 	const [caledar, setCaledar] = useState(new Date());
-	// const [readID, setReadID] = useState("");
-
-	// console.log(readID);
-
-	// console.log(caledar.toLocaleDateString());
-	// to show the calendar
 	const [show, setShow] = useState(false);
 
 	const toggleCalendar = () => {
@@ -70,8 +72,13 @@ const MyDay = () => {
 				`http://localhost:5000/api/task/completeTask/${currentUser?._id}/${id}`,
 			)
 			.then(() => {
-				window.location.reload();
+				audRef?.current?.play();
+				setTimeout(() => {
+					window.location.reload();
+				}, 1000);
 			});
+
+		// window.location.reload();
 	};
 	const updatingStatusFalse = async (id: string) => {
 		await axios
@@ -152,7 +159,7 @@ const MyDay = () => {
 								<TitleHold
 									onClick={() => {
 										toggleShow();
-										// setReadID(props._id);
+										setReadID(props._id);
 									}}>
 									<Title td={props.status ? "line-through " : ""}>
 										{props.title}
@@ -166,7 +173,9 @@ const MyDay = () => {
 							</Hol>
 							<span>
 								<AiOutlineStar />
+								<div>{props?.reciever}</div>
 							</span>
+							<audio ref={audRef} src={playAud} />
 						</InputHold2>
 					))}
 				</Cont>
@@ -195,6 +204,10 @@ const Sub = styled.div`
 const Title = styled.div<{ td: string }>`
 	font-weight: 500;
 	text-decoration: ${(props) => props.td};
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	max-width: 200px;
 `;
 const Hol = styled.div`
 	display: flex;
@@ -286,6 +299,7 @@ const Cont = styled.div`
 	justify-content: flex-start;
 	padding-left: 100px;
 	flex-direction: column;
+	margin-top: 70px;
 	/* background-color: red; */
 	flex: 1;
 `;
@@ -312,5 +326,6 @@ const Container = styled.div`
 	align-items: center;
 	flex-direction: column;
 	background-color: #faf9f8;
+
 	/* flex-direction: column; */
 `;

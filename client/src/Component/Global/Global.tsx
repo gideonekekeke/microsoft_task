@@ -10,11 +10,12 @@ interface ContextData {
 	toggleShow: () => void;
 	currentUser: User;
 	setCurrentUser: React.Dispatch<React.SetStateAction<User>>;
+	readID: string;
+	setReadID: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const GlobalContext = createContext<ContextData>({
 	showDetail: false,
-
 	toggleShow: () => {},
 	currentUser: {
 		name: "",
@@ -22,6 +23,8 @@ export const GlobalContext = createContext<ContextData>({
 		_id: "",
 	},
 	setCurrentUser: (currentUser: {}) => {},
+	readID: "",
+	setReadID: () => {},
 });
 
 export const MainContext: React.FC<React.PropsWithChildren> = ({
@@ -29,6 +32,7 @@ export const MainContext: React.FC<React.PropsWithChildren> = ({
 }) => {
 	const [showDetail, setShowDetail] = useState(false);
 	const [currentUser, setCurrentUser] = useState<User>({} as User);
+	const [readID, setReadID] = useState("");
 
 	const toggleShow = () => {
 		setShowDetail(!showDetail);
@@ -49,6 +53,8 @@ export const MainContext: React.FC<React.PropsWithChildren> = ({
 				toggleShow,
 				currentUser,
 				setCurrentUser,
+				readID,
+				setReadID,
 			}}>
 			{children}
 		</GlobalContext.Provider>

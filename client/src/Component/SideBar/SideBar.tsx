@@ -197,11 +197,11 @@ const IconHold = styled.div`
 const Nav = styled.div``;
 
 const Holder = styled.div`
-	margin-top: 50px;
+	margin-top: 100px;
 	/* width: 100%; */
 `;
 const Cont = styled.div`
-	height: calc(100vh - 50px);
+	height: 100vh;
 	position: fixed;
 	background-color: white;
 	width: 230px;
